@@ -23,21 +23,6 @@ router.get('/', (req, res, next) => {
   }).catch(next)
 })
 
-// GET USER BY ID
-router.get('/show/:userId', (req, res, next) => {
-  db.get('SELECT * FROM users WHERE ROWID = ?', req.params.userId)
-  .then((user) => {
-    res.format({
-      html: () => { res.render('users/show', {
-          title: 'Utilisateur ' + user.pseudo,
-          user: user,
-          userId: req.params.userId
-      }) }, 
-      json: () => { res.send(user) }
-    })
-  }).catch(next)
-})
-
 // GET ADD USER FORM
 router.get('/add', (req, res, next) => {
   res.format({
@@ -51,7 +36,7 @@ router.get('/add', (req, res, next) => {
 })
 
 // GET EDIT USER FORM
-router.get('/:userId/edit', (req, res, next) => {
+router.get('/edit/:userId', (req, res, next) => {
   db.get('SELECT * FROM users WHERE ROWID = ?', req.params.userId)
   .then((user) => {
     res.format({
@@ -75,7 +60,7 @@ router.post('/', (req, res, next) => {
   .then((hash) => {
     db.run(
       "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
-      hat(), req.body.pseudo, req.body.email, hash, req.body.firstname, req.body.lastname, new Date(), null
+      hat(), req.body.pseudo, req.body.email, hash, req.body.firstname, req.body.lastname, new Date().toLocaleString(), null
     )}) 
   .then(() => {
     res.redirect('/users')
@@ -91,13 +76,31 @@ router.delete('/:userId', (req, res, next) => {
   }).catch(next)
 })
 
+// GET USER BY ID
+router.get('/:userId', (req, res, next) => {
+  db.get('SELECT * FROM users WHERE ROWID = ?', req.params.userId)
+  .then((user) => {
+    res.format({
+      html: () => { res.render('users/show', {
+          title: 'Utilisateur ' + user.pseudo,
+          user: user,
+          userId: req.params.userId
+      }) }, 
+      json: () => { res.send(user) }
+    })
+  }).catch(next)
+})
+
 // UPDATE USER
 router.put('/:userId', (req, res, next) => {
   console.log(req.body, req.params.userId)
-  db.run("UPDATE users SET pseudo = ?, email = ?, firstname = ?, lastname = ?, updatedAt= ? WHERE rowid = ?",req.body.pseudo, req.body.email, req.body.firstname, req.body.lastname, new Date(), req.params.userId)
+  db.run(
+    "UPDATE users SET pseudo = ?, email = ?, firstname = ?, lastname = ?, updatedAt= ? WHERE rowid = ?",
+    req.body.pseudo, req.body.email, req.body.firstname, req.body.lastname, new Date().toLocaleString(), req.params.userId
+  )
   .then(() => {
     console.log(req.params.userId)
-    res.redirect('/users/show/' + req.params.userId)
+    res.redirect('/users/' + req.params.userId)
   }).catch(next)
 })
 

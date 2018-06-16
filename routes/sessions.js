@@ -11,16 +11,27 @@ Date.prototype.addHours = function(h) {
 }
 
 router.get('/login', (req, res, next) => {
-    res.format({
-        html: () => { 
-            res.render('sessions/login', {
-                title: 'Connexion'
-            }) 
-        },
-        json: () => { 
-            res.send({"message": 'Use POST method on /login with email & password'}) 
-        }
-    })
+    let contentType = req.get('Content-Type')
+    if (contentType == 'application/json') 
+        var userToken = req.headers['x-access-token']
+    else 
+        var userToken = req.session.accessToken
+    
+    if (userToken) {
+        res.redirect('/users/') 
+    }
+    else {
+        res.format({
+            html: () => { 
+                res.render('sessions/login', {
+                    title: 'Connexion'
+                }) 
+            },
+            json: () => { 
+                res.send({"message": 'Use POST method on /login with email & password'}) 
+            }
+        })
+    }
 })
 
 router.post('/login', async (req, res, next) => {
