@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+    h1= title
+    form(method='POST' action="http://localhost:8080/users/")
+        input#pseudo(
+            type="text", 
+            placeholder="Pseudo" 
+            name="pseudo")
+        input#email(
+            type="email", 
+            placeholder="Email" 
+            name="email")
+        input#password(
+            type="password"
+            placeholder="Password"
+            name="password")
+        input#firstname(
+            type="text", 
+            placeholder="Prénom" 
+            name="firstname")
+        input#lastname(
+            type="text", 
+            placeholder="Nom" 
+            name="lastname")
+        input#submit(type="submit")

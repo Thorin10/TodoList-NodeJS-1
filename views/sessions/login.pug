@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+    h1= title
+    form(method='POST' action="http://localhost:8080/login")
+        input#email(
+            type="email", 
+            placeholder="Email" 
+            name="email")
+        input#password(
+            type="password"
+            placeholder="Password"
+            name="password")
+        input#submit(type="submit")

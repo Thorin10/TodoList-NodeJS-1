@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+    h1= title
+    form(method='POST' action="http://localhost:8080/users/" + userId + "?_method=PUT")
+        input#pseudo(
+            type="text", 
+            placeholder="Pseudo" 
+            name="pseudo"
+            value=user.pseudo)
+        input#email(
+            type="email", 
+            placeholder="Email" 
+            name="email"
+            value=user.email)
+        input#firstname(
+            type="text", 
+            placeholder="Prénom" 
+            name="firstname"
+            value=user.firstname)
+        input#lastname(
+            type="text", 
+            placeholder="Nom" 
+            name="lastname"
+            value=user.lastname)
+        input#submit(type="submit")

@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+    h1= title
+    ul
+        each val in user
+            if val
+                li= val
+
+    form(method='POST' action="http://localhost:8080/users/" + userId + "?_method=DELETE")
+        input(type="submit" value="Supprimer")

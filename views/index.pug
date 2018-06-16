@@ -1,9 +1,5 @@
-html
-    head 
-        title= title 
-    body 
-        h1= title
-        ul
-            each user in users
-                if user.pseudo 
-                    li= user.pseudo
+extends layout
+
+block content
+  h1= title
+  p Bienvenue sur #{title}
