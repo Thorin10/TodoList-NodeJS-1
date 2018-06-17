@@ -2,6 +2,23 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/css/style.css')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css')
+    script(src='https://code.jquery.com/jquery-3.3.1.min.js')
   body
-    block content
+    header
+      nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+        a.navbar-brand(href='/') TodoList
+        button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNavAltMarkup', aria-controls='navbarNavAltMarkup', aria-expanded='false', aria-label='Toggle navigation')
+          span.navbar-toggler-icon
+        #navbarNavAltMarkup.collapse.navbar-collapse
+          .navbar-nav
+            a.nav-item.nav-link(href='/todos/') Mes todos 
+            a.nav-item.nav-link(href='/users/') Utilisateurs
+        ul.nav.navbar-nav.navbar-right
+          li
+            a.nav-item.nav-link(href='/login') Connexion
+          li
+            a.nav-item.nav-link(href='/logout') Déconnexion
+
+    main.container
+      block content

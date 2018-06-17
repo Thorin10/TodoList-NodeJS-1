@@ -45,7 +45,8 @@ db.open('expressapi.db').then(() => {
   let promises = []
   datas = [
     db.run('CREATE TABLE IF NOT EXISTS users (id, pseudo, email, password, firstname, lastname, createdAt, updatedAt)'),
-    db.run('CREATE TABLE IF NOT EXISTS sessions (userId, accessToken, createdAt, expiresAt)')
+    db.run('CREATE TABLE IF NOT EXISTS sessions (userId, accessToken, createdAt, expiresAt)'),
+    db.run('CREATE TABLE IF NOT EXISTS todos (id, userId, message, createdAt, updatedAt, completedAt)')
   ]
   for (i in datas) {
     promises.push(datas[i]); 
@@ -73,7 +74,7 @@ function isPublicRoute(currentRequest) {
       "method": 'POST'}
   ]
   for (let i = 0; i < publicUrls.length; i++) {
-    if (_.isEqual(publicUrls[i], currentRequest) || _.includes(currentRequest.url, '/css/')) 
+    if (_.isEqual(publicUrls[i], currentRequest) || _.includes(currentRequest.url, '.css')) 
       return true
   }
   return false
@@ -85,23 +86,17 @@ app.all('*', async (req, res, next) => {
     "url": req.url,
     "method": req.method
   }
-  console.log('___REQUEST___', currentRequest)
 
   const isPublic = await isPublicRoute(currentRequest)
 
   if (isPublic) {
-    console.log('____PUBLIC____')
     next()
   }
   else {
-    console.log('____PRIVATE____')
-    console.log('==> ContentType : ', req.get('Content-Type'))
     if (req.get('Content-Type') == 'application/json') 
       var userToken = req.headers['x-access-token']
     else 
       var userToken = req.session.accessToken
-
-    console.log('___TOKEN___', userToken)
 
     db.get("SELECT * FROM sessions WHERE accessToken = ?", userToken)
     .then((session) => {
@@ -110,23 +105,15 @@ app.all('*', async (req, res, next) => {
         db.run('DELETE FROM sessions WHERE accessToken = ?', req.session.accessToken)
         .then(() => {
             req.session.accessToken = null
-            res.format({
-              html: () => { res.redirect('/login') },
-              json: () => { res.send({"message": "Vous devez vous reconnecter"}) }
-            })
+            res.redirect('/login')
         })
       }
       else {
-        console.log('___TOKEN OK___')
         next()
       }
     })
     .catch(() =>{
-      console.log('___CATCH___')
-      res.format({
-        html: () => { res.redirect('/login') },
-        json: () => { res.send({"message": "Vous n'êtes pas autorisé à accéder à ces informations"}) }
-      })
+      res.redirect('/login') 
     })
   }
 })
@@ -134,6 +121,7 @@ app.all('*', async (req, res, next) => {
 app.use('/', require('./routes/index'))
 app.use('/users', require('./routes/users'))
 app.use('/', require('./routes/sessions'))
+app.use('/todos', require('./routes/todos'))
 
 
 // Erreur 404

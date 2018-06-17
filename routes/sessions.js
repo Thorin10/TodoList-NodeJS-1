@@ -18,7 +18,7 @@ router.get('/login', (req, res, next) => {
         var userToken = req.session.accessToken
     
     if (userToken) {
-        res.redirect('/users/') 
+        res.redirect('/todos/') 
     }
     else {
         res.format({
@@ -47,7 +47,6 @@ router.post('/login', async (req, res, next) => {
             let now = new Date().toLocaleString()
             let expire = new Date().addHours(2).toLocaleString()
             let token = hat()
-            console.log('==> Generate TOKEN : ', token)
             db.run(
                 "INSERT INTO sessions VALUES (?, ?, ?, ?)",
                 user.id, token, now, expire 
@@ -56,7 +55,7 @@ router.post('/login', async (req, res, next) => {
                 res.format({
                     html: () => { 
                         req.session.accessToken = token
-                        res.redirect('/users') 
+                        res.redirect('/todos') 
                     },
                     json: () => { 
                         req.headers['x-access-token'] = token
@@ -79,7 +78,6 @@ router.get('/logout', (req, res, next) => {
     else 
         var userToken = req.session.accessToken
 
-    console.log('==> USERTOKEN TO DELETE', userToken)
     db.run('DELETE FROM sessions WHERE accessToken = ?', userToken)
     .then(() => {
         res.format({

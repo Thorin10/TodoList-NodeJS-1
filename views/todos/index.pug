@@ -1,0 +1,67 @@
+extends ../layout
+
+block content
+    h1.mb-5.mt-5.text-center= title
+
+    a.btn.btn-outline-success.mb-3(href="/todos/add") Ajouter
+
+    if todos.length > 0
+        table.table
+            thead.thead-dark   
+                tr  
+                    th  
+                    th Tâche
+                    th Utilisateur
+                    th Modifier
+                    th Supprimer
+                    th Etat
+            tbody
+                each todo in todos
+                    if !todo.completedAt || todo.completedAt == 0
+                        tr
+                            td
+                                input(type="checkbox" value=todo.id)
+                            td= todo.message
+                            td= todo.pseudo
+                            td
+                                a.btn.btn-outline-primary(href="/todos/edit/" + todo.id) Modifier
+                            td 
+                                form(method='POST' action="http://localhost:8080/todos/" + todo.id + "?_method=DELETE")
+                                    input.btn.btn-outline-danger(type="submit" value="Supprimer")
+                            td A faire
+                each todo in todos
+                    if todo.completedAt && todo.completedAt != 0
+                        tr
+                            td
+                                input(type="checkbox" value=todo.id checked)
+                            td= todo.message
+                            td= todo.pseudo
+                            td
+                                a.btn.btn-outline-primary(href="/todos/edit/" + todo.id) Modifier
+                            td 
+                                form(method='POST' action="http://localhost:8080/todos/" + todo.id + "?_method=DELETE")
+                                    input.btn.btn-outline-danger(type="submit" value="Supprimer")
+                            td Terminée le #{todo.completedAt}
+    else    
+        p Vous n'avez pas encore de todos
+    
+    script(type='text/javascript').  
+        $(document).on('click', 'input[type="checkbox"]', function(){
+            $.ajax({
+                type: "PUT",
+                url: 'http://localhost:8080/todos/state',
+                dataType: "json",
+                data: {
+                    "todoId": $(this).val(),
+                    "state": $(this).prop("checked")
+                },
+                async: true,
+                success: function (data)
+                {
+                    if (data.output = 'refresh') {
+                        $("table").load(" table");
+                    }
+                }
+            });
+            return false;
+        });

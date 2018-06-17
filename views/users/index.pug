@@ -1,9 +1,25 @@
 extends ../layout
 
 block content
-  h1= title
-  p Voici la liste des utilisateurs :
-        ul
+    h1.mb-5.mt-5.text-center= title
+
+    a.btn.btn-outline-success.mb-3(href="/users/add") Ajouter
+ 
+    table.table
+        thead.thead-dark   
+            tr  
+                th Utilisateur
+                th Détails
+                th Modifier
+                th Supprimer
+        tbody
             each user in users
-                if user.pseudo 
-                    li= user.pseudo
+                tr  
+                    td= user.pseudo
+                    td
+                        a.btn.btn-outline-info(href="/users/" + user.id) Détails
+                    td
+                        a.btn.btn-outline-primary(href="/users/edit/" + user.id) Modifier
+                    td
+                        form(method='POST' action="http://localhost:8080/users/" + user.id + "?_method=DELETE")
+                                    input.btn.btn-outline-danger(type="submit" value="Supprimer")

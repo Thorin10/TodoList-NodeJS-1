@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const db = require('sqlite')
-var hat = require('hat')
+const hat = require('hat')
 const bcrypt = require('bcrypt')
 
 db.open('expressapi.db')
@@ -28,7 +28,16 @@ router.get('/add', (req, res, next) => {
   res.format({
     html: () => { 
       res.render('users/add', {
-        title: 'Ajouter un utilisateur'
+        title: 'Ajouter un utilisateur',
+        user: {
+          id: '',
+          pseudo: '',
+          email: '',
+          firstname: '',
+          lasntame: ''
+        },
+        action: "http://localhost:8080/users/",
+        password: true
       }) 
     }, 
     json: () => { res.send({"message": "Use POST method on /users/ url to add user"}) }
@@ -37,13 +46,14 @@ router.get('/add', (req, res, next) => {
 
 // GET EDIT USER FORM
 router.get('/edit/:userId', (req, res, next) => {
-  db.get('SELECT * FROM users WHERE ROWID = ?', req.params.userId)
+  db.get('SELECT * FROM users WHERE id = ?', req.params.userId)
   .then((user) => {
     res.format({
-      html: () => { res.render('users/edit', {
+      html: () => { res.render('users/add', {
           title: 'Utilisateur ' + user.pseudo,
           user: user,
-          userId: req.params.userId
+          action: "http://localhost:8080/users/" + user.id + "?_method=PUT",
+          password: false
       }) }, 
       json: () => { res.send(user) }
     })
@@ -70,7 +80,7 @@ router.post('/', (req, res, next) => {
 
 // DELETE USER
 router.delete('/:userId', (req, res, next) => {
-  db.run('DELETE FROM users WHERE ROWID = ?', req.params.userId)
+  db.run('DELETE FROM users WHERE id = ?', req.params.userId)
   .then(() => {
     res.redirect('/users')
   }).catch(next)
@@ -78,13 +88,12 @@ router.delete('/:userId', (req, res, next) => {
 
 // GET USER BY ID
 router.get('/:userId', (req, res, next) => {
-  db.get('SELECT * FROM users WHERE ROWID = ?', req.params.userId)
+  db.get('SELECT * FROM users WHERE id = ?', req.params.userId)
   .then((user) => {
     res.format({
       html: () => { res.render('users/show', {
           title: 'Utilisateur ' + user.pseudo,
           user: user,
-          userId: req.params.userId
       }) }, 
       json: () => { res.send(user) }
     })
@@ -93,13 +102,11 @@ router.get('/:userId', (req, res, next) => {
 
 // UPDATE USER
 router.put('/:userId', (req, res, next) => {
-  console.log(req.body, req.params.userId)
   db.run(
-    "UPDATE users SET pseudo = ?, email = ?, firstname = ?, lastname = ?, updatedAt= ? WHERE rowid = ?",
+    "UPDATE users SET pseudo = ?, email = ?, firstname = ?, lastname = ?, updatedAt= ? WHERE id = ?",
     req.body.pseudo, req.body.email, req.body.firstname, req.body.lastname, new Date().toLocaleString(), req.params.userId
   )
   .then(() => {
-    console.log(req.params.userId)
     res.redirect('/users/' + req.params.userId)
   }).catch(next)
 })

@@ -1,11 +1,23 @@
 extends ../layout
 
 block content
-    h1= title
-    ul
-        each val in user
-            if val
-                li= val
+    h1.mb-5.mt-5.text-center= title
 
-    form(method='POST' action="http://localhost:8080/users/" + userId + "?_method=DELETE")
-        input(type="submit" value="Supprimer")
+    ul.list-group
+        if user.pseudo
+            li.list-group-item Pseudo : #{user.pseudo}
+        if user.email
+            li.list-group-item Email : #{user.email}
+        if user.firstname
+            li.list-group-item Prénom : #{user.firstname}
+        if user.lastname
+            li.list-group-item Nom : #{user.lastname}
+        if user.createdAt
+            li.list-group-item Inscrit le : #{user.createdAt}
+        if user.updatedAt
+            li.list-group-item Dernière modification : #{user.updatedAt}
+
+    a.btn.btn-outline-primary.mb-3.mt-3(href="/users/edit/" + user.id) Modifier
+
+    form(method='POST' action="http://localhost:8080/users/" + user.id + "?_method=DELETE")
+        input.btn.btn-outline-danger(type="submit" value="Supprimer")

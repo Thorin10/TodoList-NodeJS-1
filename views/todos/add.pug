@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+    h1.mb-5.mt-5.text-center= title
+
+    .jumbotron.col-sm-8.offset-sm-2
+        form(method='POST' action=action)
+            .form-group
+                label Tâche à faire
+                input#message.form-control(
+                    type="text", 
+                    name="message"
+                    value=todo.message)
+            input#submit.btn.btn-success(type="submit", value="Valider")
