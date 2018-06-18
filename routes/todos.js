@@ -83,12 +83,15 @@ router.post('/', async (req, res, next) => {
         hat(), session.userId, req.body.message, new Date().toLocaleString(), null, null
     )
     .then(() => {
-        res.redirect('/todos/')
+        res.format({
+            html: () => { res.redirect('/todos') },
+            json: () => { res.send({"message": "Todo bien ajoutée"}) }
+        })
     })
     .catch(next)
 })
 
-// UPDATE TODO STATE
+// UPDATE TODO STATE (AJAX)
 router.put('/state', (req, res, next) => {
     let completedAt = (req.body.state == 'true') ? new Date().toLocaleString() : '0'; 
     db.run(
@@ -96,9 +99,7 @@ router.put('/state', (req, res, next) => {
         completedAt, req.body.todoId
     )
     .then(() => {
-        res.send({
-            "output": "refresh"
-        })
+        res.send({ "output": "refresh" })
     }) 
     .catch(next)
 })
@@ -110,7 +111,10 @@ router.put('/:todoId', (req, res, next) => {
         req.body.message, new Date().toLocaleString(), req.params.todoId
     )
     .then(() => {
-        res.redirect('/todos/')
+        res.format({
+            html: () => { res.redirect('/todos') },
+            json: () => { res.send({"message": "Todo bien modifiée"}) }
+        })
     })
     .catch(next)
 })
@@ -119,7 +123,10 @@ router.put('/:todoId', (req, res, next) => {
 router.delete('/:todoId', (req, res, next) => {
     db.run("DELETE FROM todos WHERE id = ?", req.params.todoId)
     .then(() => {
-        res.redirect('/todos/')
+        res.format({
+            html: () => { res.redirect('/todos') },
+            json: () => { res.send({"message": "Todo bien supprimée"}) }
+        })
     })
     .catch(next)
 })

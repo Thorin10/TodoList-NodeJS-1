@@ -19,13 +19,13 @@ node app.js
 ### Routes
 
 Voici la liste des routes de l'application.   
-Je vous donne les indications sur ce qu'elles renvoient en Json, et vous laisse découvrir par vous même en HTML. 
+Certaines actions décrites se font en HTML et renvoient un **"message"** en Json. 
 
 | Route | Méthode | Protégée | Retour |
 | --- | --- | --- | --- |
 | / | GET | Non | Redirige sur _/todos_
 | /login | GET | Non | Demande un _email et password_ connu
-| /login | POST | Non | **x-access-token**
+| /login | POST | Non | Redirige sur _/todos_ et donne un **x-access-token**
 | /logout | GET | Oui | Efface le _token_
 | /users/ | GET | Oui | Liste des utilisateurs
 | /users/:id | GET | Oui | L'utilisateur correspondant à l'id

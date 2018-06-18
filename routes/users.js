@@ -55,7 +55,7 @@ router.get('/edit/:userId', (req, res, next) => {
           action: "http://localhost:8080/users/" + user.id + "?_method=PUT",
           password: false
       }) }, 
-      json: () => { res.send(user) }
+      json: () => { res.send({"message": "Use PUT method on /users/:id url to edit user"}) }
     })
   }).catch(next)
 })
@@ -73,7 +73,10 @@ router.post('/', (req, res, next) => {
       hat(), req.body.pseudo, req.body.email, hash, req.body.firstname, req.body.lastname, new Date().toLocaleString(), null
     )}) 
   .then(() => {
-    res.redirect('/users')
+    res.format({
+      html: () => { res.redirect('/users') },
+      json: () => { res.send({"message": "Utilisateur bien ajouté"}) }
+    })
   })
   .catch(next)
 })
@@ -82,7 +85,10 @@ router.post('/', (req, res, next) => {
 router.delete('/:userId', (req, res, next) => {
   db.run('DELETE FROM users WHERE id = ?', req.params.userId)
   .then(() => {
-    res.redirect('/users')
+    res.format({
+      html: () => { res.redirect('/users') },
+      json: () => { res.send({"message": "Utilisateur bien supprimé"}) }
+    })
   }).catch(next)
 })
 
@@ -107,7 +113,10 @@ router.put('/:userId', (req, res, next) => {
     req.body.pseudo, req.body.email, req.body.firstname, req.body.lastname, new Date().toLocaleString(), req.params.userId
   )
   .then(() => {
-    res.redirect('/users/' + req.params.userId)
+    res.format({
+      html: () => { res.redirect('/users/' + req.params.userId) },
+      json: () => { res.send({"message": "Utilisateur bien modifié"}) }
+    })
   }).catch(next)
 })
 
